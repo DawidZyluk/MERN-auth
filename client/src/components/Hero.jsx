@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Container, Stack } from "@mui/material";
 import { useTheme } from "@emotion/react";
+import { Link } from "react-router-dom";
 
 export default function Hero() {
   const theme = useTheme();
@@ -29,10 +30,10 @@ export default function Hero() {
       </CardContent>
       <CardActions sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
         <Stack direction="row" spacing={2}>
-          <Button variant="outlined"  size="medium">
+          <Button variant="outlined" component={Link} to='/login' size="medium">
             Login
           </Button>
-          <Button variant="contained" size="medium" sx={{
+          <Button variant="contained" component={Link} to='/register' size="medium" sx={{
             backgroundColor: theme.palette.primary[400],
 
             '&:hover': {
