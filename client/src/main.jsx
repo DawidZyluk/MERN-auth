@@ -10,8 +10,10 @@ import "@fontsource/roboto/700.css";
 import HomePage from "./screens/HomePage.jsx";
 import RootLayout from "./screens/RootLayout";
 import { themeOptions } from "./theme";
+import { Provider } from "react-redux";
 import Login from "./screens/Login.jsx";
 import Register from "./screens/Register.jsx";
+import { store } from "./store/index.js";
 
 const router = createBrowserRouter([
   {
@@ -19,27 +21,28 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       {
-        
         index: true,
         element: <HomePage />,
       },
       {
         path: "login",
-        element: <Login />
+        element: <Login />,
       },
       {
         path: "Register",
-        element: <Register />
-      }
+        element: <Register />,
+      },
     ],
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <ThemeProvider theme={themeOptions}>
-      <CssBaseline />
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={themeOptions}>
+        <CssBaseline />
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </Provider>
   </React.StrictMode>
 );

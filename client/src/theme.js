@@ -10,19 +10,24 @@ const tokens = {
     600: "#005f92",
     700: "#00476d",
     800: "#003049",
-    900: "#001824"
-},
-}
+    900: "#001824",
+  },
+};
 
 export const themeOptions = createTheme({
   palette: {
-    mode: 'light',
+    mode: "light",
     primary: {
       ...tokens.primary,
       main: tokens.primary[500],
     },
     secondary: {
-      main: '#f50057',
+      main: "#f50057",
+    },
+  },
+  typography: {
+    button: {
+      textTransform: "none",
     },
   },
 });
