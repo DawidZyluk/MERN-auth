@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "@fontsource/roboto/300.css";
@@ -8,10 +9,9 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import HomePage from "./screens/HomePage.jsx";
 import RootLayout from "./screens/RootLayout";
-import { CssBaseline, ThemeProvider } from "@mui/material";
 import { themeOptions } from "./theme";
-import Login from "./screens/Login";
-import Register from "./screens/Register";
+import Login from "./screens/Login.jsx";
+import Register from "./screens/Register.jsx";
 
 const router = createBrowserRouter([
   {
