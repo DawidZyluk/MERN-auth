@@ -20,7 +20,7 @@ export default function Header() {
             variant="h6"
             component={Link}
             to="/"
-            sx={{ flexGrow: 1, textDecoration: "none", color: "white" }}
+            sx={{ textDecoration: "none", color: "white", marginRight: 'auto'}}
           >
             MERN-auth
           </Typography>

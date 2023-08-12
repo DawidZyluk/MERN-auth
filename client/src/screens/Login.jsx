@@ -15,6 +15,7 @@ import { setLogin } from "../store/authSlice";
 import { useEffect, useState } from "react";
 import { Card } from "@mui/material";
 import { useTheme } from "@emotion/react";
+import { toast } from "react-hot-toast";
 
 const loginSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Required"),
@@ -34,7 +35,7 @@ export default function Login() {
 
   const [login, { error }] = useLoginMutation();
   const { userInfo } = useSelector((state) => state.auth);
-  console.log(error);
+  
   useEffect(() => {
     if (userInfo) {
       navigate("/");
@@ -48,6 +49,7 @@ export default function Login() {
       dispatch(setLogin({ ...res, rememberMe }));
       onSubmitProps.resetForm();
       navigate("/");
+      toast.success("User logged in!")
     } catch (err) {
       console.log(err?.data?.message || err.error);
     }

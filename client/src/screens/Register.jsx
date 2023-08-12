@@ -2,31 +2,60 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Formik } from "formik";
 import * as yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useTheme } from "@emotion/react";
+import { useRegisterMutation } from "../store/usersApiSlice";
+import { toast } from "react-hot-toast";
+import { Card } from "@mui/material";
 
 const registerSchema = yup.object().shape({
-  username: yup.string().required("Required"),
+  name: yup.string().required("Required"),
   email: yup.string().email("Invalid email").required("Required"),
   password: yup.string().required("Required"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match")
+    .required("Required"),
 });
 
 const initialValues = {
-  username: "",
+  name: "",
   email: "",
   password: "",
-  rememberMe: false,
+  confirmPassword: "",
 };
 
 export default function Register() {
-  const handleSubmit = (values, onSubmitProps) => {
-    console.log(values);
-    onSubmitProps.resetForm();
+  const theme = useTheme();
+  const navigate = useNavigate();
+
+  const [register, { error }] = useRegisterMutation();
+  const { userInfo } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [navigate, userInfo]);
+
+  const handleSubmit = async (values, onSubmitProps) => {
+    const { name, email, password } = values;
+    try {
+      await register({name, email, password }).unwrap();
+      onSubmitProps.resetForm();
+      navigate("/login");
+      toast.success("Successfully registered!");
+    } catch (err) {
+      console.log(err?.data?.message || err.error);
+    }
   };
 
   return (
@@ -46,6 +75,22 @@ export default function Register() {
         <Typography sx={{ mb: 2 }} component="h1" variant="h5">
           Sign up
         </Typography>
+        {error && (
+          <Card
+            variant="outlined"
+            sx={{
+              width: "100%",
+              textAlign: "center",
+              py: 1,
+              borderColor: theme.palette.error.light,
+              backgroundColor: theme.palette.error[50],
+            }}
+          >
+            <Typography sx={{ color: theme.palette.error.main }}>
+              {error.data.message}
+            </Typography>
+          </Card>
+        )}
         <Formik
           onSubmit={handleSubmit}
           initialValues={initialValues}
@@ -70,16 +115,16 @@ export default function Register() {
               <TextField
                 margin="normal"
                 fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
+                id="name"
+                label="Name"
+                name="name"
+                autoComplete="name"
                 autoFocus
                 // onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.username}
-                error={Boolean(touched.username) && Boolean(errors.username)}
-                helperText={touched.username && errors.username}
+                value={values.name}
+                error={Boolean(touched.name) && Boolean(errors.name)}
+                helperText={touched.name && errors.name}
               />
               <TextField
                 margin="normal"
@@ -108,9 +153,22 @@ export default function Register() {
                 error={Boolean(touched.password) && Boolean(errors.password)}
                 helperText={touched.password && errors.password}
               />
-              <FormControlLabel
-                control={<Checkbox id="rememberMe" value={values.rememberMe} onChange={handleChange} color="primary" />}
-                label="Remember me"
+              <TextField
+                margin="normal"
+                fullWidth
+                name="confirmPassword"
+                label="Confirm password"
+                type="password"
+                id="confirmPassword"
+                autoComplete="current-password"
+                // onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.confirmPassword}
+                error={
+                  Boolean(touched.confirmPassword) &&
+                  Boolean(errors.confirmPassword)
+                }
+                helperText={touched.confirmPassword && errors.confirmPassword}
               />
               <Button
                 type="submit"
@@ -123,9 +181,7 @@ export default function Register() {
               </Button>
               <Grid container>
                 <Grid item>
-                  <Link to="/login">
-                    Already have an account? Sign in
-                  </Link>
+                  <Link to="/login">Already have an account? Sign in</Link>
                 </Grid>
               </Grid>
             </Box>

@@ -14,6 +14,7 @@ import { Provider } from "react-redux";
 import Login from "./screens/Login.jsx";
 import Register from "./screens/Register.jsx";
 import { store } from "./store/index.js";
+import {Toaster} from 'react-hot-toast';
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <ThemeProvider theme={themeOptions}>
         <CssBaseline />
+        <Toaster />
         <RouterProvider router={router} />
       </ThemeProvider>
     </Provider>
