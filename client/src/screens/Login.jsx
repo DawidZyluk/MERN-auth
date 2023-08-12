@@ -19,7 +19,7 @@ import { toast } from "react-hot-toast";
 
 const loginSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Required"),
-  password: yup.string().required("Required"),
+  password: yup.string().min(1).required("Required"),
 });
 
 const initialValues = {
@@ -35,7 +35,7 @@ export default function Login() {
 
   const [login, { error }] = useLoginMutation();
   const { userInfo } = useSelector((state) => state.auth);
-  
+
   useEffect(() => {
     if (userInfo) {
       navigate("/");
@@ -49,7 +49,7 @@ export default function Login() {
       dispatch(setLogin({ ...res, rememberMe }));
       onSubmitProps.resetForm();
       navigate("/");
-      toast.success("User logged in!")
+      toast.success("User logged in!");
     } catch (err) {
       console.log(err?.data?.message || err.error);
     }
@@ -89,6 +89,7 @@ export default function Login() {
           </Card>
         )}
         <Formik
+          validateOnBlur={false}
           onSubmit={handleSubmit}
           initialValues={initialValues}
           validationSchema={loginSchema}
@@ -117,7 +118,7 @@ export default function Login() {
                 name="email"
                 autoComplete="email"
                 autoFocus
-                // onBlur={handleBlur}
+                onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.email}
                 error={Boolean(touched.email) && Boolean(errors.email)}
@@ -131,7 +132,7 @@ export default function Login() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                // onBlur={handleBlur}
+                onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.password}
                 error={Boolean(touched.password) && Boolean(errors.password)}

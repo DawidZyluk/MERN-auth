@@ -49,7 +49,7 @@ export default function Register() {
   const handleSubmit = async (values, onSubmitProps) => {
     const { name, email, password } = values;
     try {
-      await register({name, email, password }).unwrap();
+      await register({ name, email, password }).unwrap();
       onSubmitProps.resetForm();
       navigate("/login");
       toast.success("Successfully registered!");
@@ -92,6 +92,7 @@ export default function Register() {
           </Card>
         )}
         <Formik
+          validateOnBlur={false}
           onSubmit={handleSubmit}
           initialValues={initialValues}
           validationSchema={registerSchema}
@@ -120,7 +121,7 @@ export default function Register() {
                 name="name"
                 autoComplete="name"
                 autoFocus
-                // onBlur={handleBlur}
+                onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.name}
                 error={Boolean(touched.name) && Boolean(errors.name)}
@@ -133,7 +134,7 @@ export default function Register() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                // onBlur={handleBlur}
+                onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.email}
                 error={Boolean(touched.email) && Boolean(errors.email)}
@@ -147,7 +148,7 @@ export default function Register() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                // onBlur={handleBlur}
+                onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.password}
                 error={Boolean(touched.password) && Boolean(errors.password)}
@@ -161,7 +162,7 @@ export default function Register() {
                 type="password"
                 id="confirmPassword"
                 autoComplete="current-password"
-                // onBlur={handleBlur}
+                onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.confirmPassword}
                 error={
