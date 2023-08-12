@@ -12,6 +12,18 @@ const tokens = {
     800: "#003049",
     900: "#001824",
   },
+  error: {
+    50: '#f7d7dd',
+    100: "#f7cdd4",
+    200: "#f09ba9",
+    300: "#e8687f",
+    400: "#e13654",
+    500: "#d90429",
+    600: "#ae0321",
+    700: "#820219",
+    800: "#570210",
+    900: "#2b0108",
+  },
 };
 
 export const themeOptions = createTheme({
@@ -23,6 +35,10 @@ export const themeOptions = createTheme({
     },
     secondary: {
       main: "#f50057",
+    },
+    error: {
+      ...tokens.error,
+      main: tokens.error[500],
     },
   },
   typography: {

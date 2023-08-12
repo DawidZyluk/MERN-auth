@@ -2,13 +2,19 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Formik } from "formik";
 import * as yup from "yup";
+import { useLoginMutation } from "../store/usersApiSlice";
+import { setLogin } from "../store/authSlice";
+import { useEffect, useState } from "react";
+import { Card } from "@mui/material";
+import { useTheme } from "@emotion/react";
 
 const loginSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Required"),
@@ -22,9 +28,32 @@ const initialValues = {
 };
 
 export default function Login() {
-  const handleSubmit = (values, onSubmitProps) => {
-    console.log(values);
-    onSubmitProps.resetForm();
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [error, setError] = useState("");
+  const [login] = useLoginMutation();
+  const { userInfo } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [navigate, userInfo]);
+
+  const handleSubmit = async (values, onSubmitProps) => {
+    const { email, password, rememberMe } = values;
+    try {
+      const res = await login({email, password}).unwrap();
+      dispatch(setLogin({ ...res, rememberMe }));
+      onSubmitProps.resetForm();
+      setError("");
+      navigate("/");
+    } catch (err) {
+      setError(err?.data?.message || "Something went wrong");
+      console.log(err?.data?.message || err.error);
+    }
   };
 
   return (
@@ -41,9 +70,24 @@ export default function Login() {
           alignItems: "center",
         }}
       >
-        <Typography sx={{mb: 2}} component="h1" variant="h5">
+        <Typography sx={{ mb: 2 }} component="h1" variant="h5">
           Sgin in
         </Typography>
+        {error !== '' && (
+          <Card variant="outlined"
+            sx={{
+              width: "100%",
+              textAlign: "center",
+              py: 1,
+              borderColor: theme.palette.error.light,
+              backgroundColor: theme.palette.error[50],
+            }}
+          >
+            <Typography sx={{ color: theme.palette.error.main }}>
+              {error}
+            </Typography>
+          </Card>
+        )}
         <Formik
           onSubmit={handleSubmit}
           initialValues={initialValues}
@@ -57,7 +101,7 @@ export default function Login() {
             handleChange,
             handleSubmit,
             isValid,
-            isSubmitting
+            isSubmitting,
           }) => (
             <Box
               component="form"
@@ -94,7 +138,14 @@ export default function Login() {
                 helperText={touched.password && errors.password}
               />
               <FormControlLabel
-                control={<Checkbox id="rememberMe" value={values.rememberMe} onChange={handleChange} color="primary" />}
+                control={
+                  <Checkbox
+                    id="rememberMe"
+                    value={values.rememberMe}
+                    onChange={handleChange}
+                    color="primary"
+                  />
+                }
                 label="Remember me"
               />
               <Button
@@ -113,9 +164,7 @@ export default function Login() {
                   </Link>
                 </Grid> */}
                 <Grid item>
-                  <Link to="/register">
-                    Don't have an account? Sign Up
-                  </Link>
+                  <Link to="/register">Don't have an account? Sign Up</Link>
                 </Grid>
               </Grid>
             </Box>
