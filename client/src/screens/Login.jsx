@@ -32,10 +32,9 @@ export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [error, setError] = useState("");
-  const [login] = useLoginMutation();
+  const [login, { error }] = useLoginMutation();
   const { userInfo } = useSelector((state) => state.auth);
-
+  console.log(error);
   useEffect(() => {
     if (userInfo) {
       navigate("/");
@@ -45,13 +44,11 @@ export default function Login() {
   const handleSubmit = async (values, onSubmitProps) => {
     const { email, password, rememberMe } = values;
     try {
-      const res = await login({email, password}).unwrap();
+      const res = await login({ email, password }).unwrap();
       dispatch(setLogin({ ...res, rememberMe }));
       onSubmitProps.resetForm();
-      setError("");
       navigate("/");
     } catch (err) {
-      setError(err?.data?.message || "Something went wrong");
       console.log(err?.data?.message || err.error);
     }
   };
@@ -73,8 +70,9 @@ export default function Login() {
         <Typography sx={{ mb: 2 }} component="h1" variant="h5">
           Sgin in
         </Typography>
-        {error !== '' && (
-          <Card variant="outlined"
+        {error && (
+          <Card
+            variant="outlined"
             sx={{
               width: "100%",
               textAlign: "center",
@@ -84,7 +82,7 @@ export default function Login() {
             }}
           >
             <Typography sx={{ color: theme.palette.error.main }}>
-              {error}
+              {error.data.message}
             </Typography>
           </Card>
         )}
@@ -144,6 +142,7 @@ export default function Login() {
                     value={values.rememberMe}
                     onChange={handleChange}
                     color="primary"
+                    checked
                   />
                 }
                 label="Remember me"
