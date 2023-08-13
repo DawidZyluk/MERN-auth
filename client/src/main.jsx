@@ -14,7 +14,9 @@ import { Provider } from "react-redux";
 import Login from "./screens/Login.jsx";
 import Register from "./screens/Register.jsx";
 import { store } from "./store/index.js";
-import {Toaster} from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
+import Profile from "./screens/Profile";
+import PrivateRoute from "./components/PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -30,8 +32,18 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "Register",
+        path: "register",
         element: <Register />,
+      },
+      {
+        path: "",
+        element: <PrivateRoute />,
+        children: [
+          {
+            path: "profile",
+            element: <Profile />,
+          },
+        ],
       },
     ],
   },

@@ -7,50 +7,48 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@emotion/react";
-import { useRegisterMutation } from "../store/usersApiSlice";
 import { toast } from "react-hot-toast";
 import { Card } from "@mui/material";
+import { useUpdateMutation } from "../store/usersApiSlice";
+import { setLogin } from "../store/authSlice";
 
 const registerSchema = yup.object().shape({
   name: yup.string().required("Required"),
   email: yup.string().email("Invalid email").required("Required"),
-  password: yup.string().required("Required"),
+  password: yup.string().oneOf([yup.ref("confirmPassword"), null], "Passwords must match"),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref("password"), null], "Passwords must match")
-    .required("Required"),
+    .oneOf([yup.ref("password"), null], "Passwords must match"),
 });
 
-const initialValues = {
-  name: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-};
-
-export default function Register() {
+export default function Profile() {
   const theme = useTheme();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const [register, { error }] = useRegisterMutation();
+  const [update, { error }] = useUpdateMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (userInfo) {
-      navigate("/");
-    }
-  }, [navigate, userInfo]);
+  const initialValues = {
+    name: userInfo.name,
+    email: userInfo.email,
+    password: "",
+    confirmPassword: "",
+  };
 
   const handleSubmit = async (values, onSubmitProps) => {
     const { name, email, password } = values;
     try {
-      await register({ name, email, password }).unwrap();
-      onSubmitProps.resetForm();
-      navigate("/login");
-      toast.success("Successfully registered!");
+      const res = await update({
+        _id: userInfo._id,
+        name,
+        email,
+        password,
+      }).unwrap();
+      dispatch(setLogin({ ...res }));
+      toast.success("Profile Updated!");
     } catch (err) {
       console.log(err?.data?.message || err.error);
     }
@@ -71,7 +69,7 @@ export default function Register() {
         }}
       >
         <Typography sx={{ mb: 2 }} component="h1" variant="h5">
-          Sign up
+          Update profile
         </Typography>
         {error && (
           <Card
@@ -176,13 +174,8 @@ export default function Register() {
                 sx={{ mt: 3, mb: 2 }}
                 disabled={isSubmitting || !isValid}
               >
-                Sign up
+                Update
               </Button>
-              <Grid container>
-                <Grid item>
-                  <Link to="/login">Already have an account? Sign in</Link>
-                </Grid>
-              </Grid>
             </Box>
           )}
         </Formik>
