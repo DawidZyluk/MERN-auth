@@ -17,7 +17,9 @@ import { setLogin } from "../store/authSlice";
 const registerSchema = yup.object().shape({
   name: yup.string().required("Required"),
   email: yup.string().email("Invalid email").required("Required"),
-  password: yup.string().oneOf([yup.ref("confirmPassword"), null], "Passwords must match"),
+  password: yup
+    .string()
+    .oneOf([yup.ref("confirmPassword"), null], "Passwords must match"),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password"), null], "Passwords must match"),
@@ -39,14 +41,8 @@ export default function Profile() {
   };
 
   const handleSubmit = async (values, onSubmitProps) => {
-    const { name, email, password } = values;
     try {
-      const res = await update({
-        _id: userInfo._id,
-        name,
-        email,
-        password,
-      }).unwrap();
+      const res = await update(values).unwrap();
       dispatch(setLogin({ ...res }));
       toast.success("Profile Updated!");
     } catch (err) {
