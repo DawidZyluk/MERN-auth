@@ -26,6 +26,8 @@ const tokens = {
   },
 };
 
+const defaultTheme = createTheme();
+
 export const themeOptions = createTheme({
   palette: {
     mode: "light",
@@ -45,5 +47,10 @@ export const themeOptions = createTheme({
     button: {
       textTransform: "none",
     },
+    h3: {
+      '@media (max-width: 375px)': {
+        fontSize: "2.5rem"
+      }
+    }
   },
 });

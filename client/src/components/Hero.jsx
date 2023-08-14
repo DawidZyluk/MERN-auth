@@ -5,7 +5,7 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Container, Stack } from "@mui/material";
+import { Container, Stack, useMediaQuery } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { Link } from "react-router-dom";
 
@@ -14,7 +14,19 @@ export default function Hero() {
   return (
     <Card
       variant="outlined"
-      sx={{ minWidth: 275, my: 10, mx: 15, textAlign: "center", padding: 2 }}
+      sx={{
+        minWidth: 275,
+        my: 10,
+        mx: 15,
+        textAlign: "center",
+        padding: 2,
+        [theme.breakpoints.down("md")]: {
+          mx: 0
+        },
+        [theme.breakpoints.down("sm")]: {
+          my: 5
+        },
+      }}
     >
       <CardContent>
         <Typography variant="h3" fontWeight={300} my={1}>
@@ -30,16 +42,22 @@ export default function Hero() {
       </CardContent>
       <CardActions sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
         <Stack direction="row" spacing={2}>
-          <Button variant="outlined" component={Link} to='/login' size="medium">
+          <Button variant="outlined" component={Link} to="/login" size="medium">
             Login
           </Button>
-          <Button variant="contained" component={Link} to='/register' size="medium" sx={{
-            backgroundColor: theme.palette.primary[400],
+          <Button
+            variant="contained"
+            component={Link}
+            to="/register"
+            size="medium"
+            sx={{
+              backgroundColor: theme.palette.primary[400],
 
-            '&:hover': {
-              backgroundColor: theme.palette.primary[500]
-            }
-          }}>
+              "&:hover": {
+                backgroundColor: theme.palette.primary[500],
+              },
+            }}
+          >
             Register
           </Button>
         </Stack>

@@ -70,7 +70,7 @@ export default function Login() {
         }}
       >
         <Typography sx={{ mb: 2 }} component="h1" variant="h5">
-          Sgin in
+          Sign in
         </Typography>
         {error && (
           <Card
