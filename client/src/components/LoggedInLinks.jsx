@@ -92,12 +92,12 @@ const LoggedInLinks = ({ name }) => {
         sx= {{
             overflow: "visible",
             filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            mt: 0,
+            mt: 1,
             "& .MuiAvatar-root": {
-              width: 32,
-              height: 32,
+              width: 25,
+              height: 25,
               ml: -0.5,
-              mr: 1,
+              mr: 2,
             },
           }}
         transformOrigin={{ horizontal: "left", vertical: "top" }}
