@@ -1,17 +1,13 @@
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { useLoginMutation } from "../store/usersApiSlice";
-import { setLogin } from "../store/authSlice";
+import { useResetMutation } from "../store/usersApiSlice";
 import { useEffect, useState } from "react";
 import { Card } from "@mui/material";
 import { useTheme } from "@emotion/react";
@@ -19,21 +15,17 @@ import { toast } from "react-hot-toast";
 
 const loginSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Required"),
-  password: yup.string().min(1).required("Required"),
 });
 
 const initialValues = {
   email: "",
-  password: "",
-  rememberMe: false,
 };
 
-export default function Login() {
+export default function Reset() {
   const theme = useTheme();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const [login, { error }] = useLoginMutation();
+  const [reset, { error }] = useResetMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -43,13 +35,9 @@ export default function Login() {
   }, [navigate, userInfo]);
 
   const handleSubmit = async (values, onSubmitProps) => {
-    const { email, password, rememberMe } = values;
     try {
-      const res = await login({ email, password }).unwrap();
-      dispatch(setLogin({ ...res, rememberMe }));
-      onSubmitProps.resetForm();
-      navigate("/");
-      toast.success("User logged in!");
+      await reset(values.email).unwrap();
+      toast.success("Password reset e-mail have been sent");
     } catch (err) {
       console.log(err?.data?.message || err.error);
     }
@@ -70,7 +58,7 @@ export default function Login() {
         }}
       >
         <Typography sx={{ mb: 2 }} component="h1" variant="h5">
-          Sign in
+          Reset your password
         </Typography>
         {error && (
           <Card
@@ -124,32 +112,6 @@ export default function Login() {
                 error={Boolean(touched.email) && Boolean(errors.email)}
                 helperText={touched.email && errors.email}
               />
-              <TextField
-                margin="normal"
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.password}
-                error={Boolean(touched.password) && Boolean(errors.password)}
-                helperText={touched.password && errors.password}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    id="rememberMe"
-                    value={values.rememberMe}
-                    onChange={handleChange}
-                    color="primary"
-                    checked
-                  />
-                }
-                label="Remember me"
-              />
               <Button
                 type="submit"
                 fullWidth
@@ -157,18 +119,8 @@ export default function Login() {
                 sx={{ mt: 3, mb: 2 }}
                 disabled={isSubmitting || !isValid}
               >
-                Sign in
+                Send instructions
               </Button>
-              <Grid container>
-                <Grid item xs>
-                  <Link to="/reset">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link to="/register">Don't have an account? Sign Up</Link>
-                </Grid>
-              </Grid>
             </Box>
           )}
         </Formik>
