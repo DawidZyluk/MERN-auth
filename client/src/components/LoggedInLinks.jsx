@@ -12,6 +12,7 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Logout from "@mui/icons-material/Logout";
+import { stringAvatar, stringToColor } from "../utils/stringAvatar";
 
 const LoggedInLinks = ({ name }) => {
   const [anchorEl, setAnchorEl] = useState();
@@ -24,9 +25,11 @@ const LoggedInLinks = ({ name }) => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleLogout = async () => {
     try {
       await logoutApi().unwrap();
@@ -36,35 +39,6 @@ const LoggedInLinks = ({ name }) => {
       console.log(error);
     }
   };
-
-  function stringToColor(string) {
-    let hash = 0;
-    let i;
-
-    /* eslint-disable no-bitwise */
-    for (i = 0; i < string.length; i += 1) {
-      hash = string.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    let color = "#";
-
-    for (i = 0; i < 3; i += 1) {
-      const value = (hash >> (i * 8)) & 0xff;
-      color += `00${value.toString(16)}`.slice(-2);
-    }
-    /* eslint-enable no-bitwise */
-
-    return color;
-  }
-
-  function stringAvatar(name) {
-    return {
-      sx: {
-        bgcolor: stringToColor(name),
-      },
-      children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
-    };
-  }
 
   return (
     <>
@@ -78,7 +52,10 @@ const LoggedInLinks = ({ name }) => {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <Avatar {...stringAvatar(name)} />
+            <Avatar
+              sx={{ bgcolor: stringToColor(name) }}
+              children={`${name.split(" ")[0][0]}${name.split(" ")[1][0]}`}
+            />
           </IconButton>
         </Tooltip>
       </Box>
@@ -89,17 +66,17 @@ const LoggedInLinks = ({ name }) => {
         onClose={handleClose}
         onClick={handleClose}
         elevation={0}
-        sx= {{
-            overflow: "visible",
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            mt: 1,
-            "& .MuiAvatar-root": {
-              width: 25,
-              height: 25,
-              ml: -0.5,
-              mr: 2,
-            },
-          }}
+        sx={{
+          overflow: "visible",
+          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+          mt: 1,
+          "& .MuiAvatar-root": {
+            width: 25,
+            height: 25,
+            ml: -0.5,
+            mr: 2,
+          },
+        }}
         transformOrigin={{ horizontal: "left", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >

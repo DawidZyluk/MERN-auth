@@ -40,7 +40,7 @@ export default function Register() {
 
   useEffect(() => {
     if (userInfo) {
-      navigate("/profile");
+      navigate("/");
     }
   }, [navigate, userInfo]);
 

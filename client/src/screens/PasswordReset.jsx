@@ -37,7 +37,7 @@ export default function RequestReset() {
 
   useEffect(() => {
     if (userInfo) {
-      navigate("/profile");
+      navigate("/");
     }
   }, [navigate, userInfo]);
 
@@ -61,7 +61,7 @@ export default function RequestReset() {
         sx={{
           boxShadow: 3,
           borderRadius: 2,
-          px: 12,
+          px: 4,
           py: 6,
           marginTop: 8,
           display: "flex",
@@ -77,6 +77,7 @@ export default function RequestReset() {
             variant="outlined"
             sx={{
               width: "100%",
+              maxWidth: "360px",
               textAlign: "center",
               py: 1,
               borderColor: theme.palette.error.light,

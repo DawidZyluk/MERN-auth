@@ -9,6 +9,7 @@ import { Container, Stack, useMediaQuery } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import UserInfo from "./UserInfo";
 
 export default function Hero() {
   const { userInfo } = useSelector((state) => state.auth);
@@ -23,10 +24,10 @@ export default function Hero() {
         textAlign: "center",
         padding: 2,
         [theme.breakpoints.down("md")]: {
-          mx: 0
+          mx: 0,
         },
         [theme.breakpoints.down("sm")]: {
-          my: 5
+          my: 5,
         },
       }}
     >
@@ -42,27 +43,37 @@ export default function Hero() {
           combine robustness, security, and user experience.
         </Typography>
       </CardContent>
-      <CardActions sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
-        <Stack direction="row" spacing={2}>
-          <Button variant="outlined" component={Link} to="/login" size="medium">
-            Login
-          </Button>
-          <Button
-            variant="contained"
-            component={Link}
-            to="/register"
-            size="medium"
-            sx={{
-              backgroundColor: theme.palette.primary[400],
 
-              "&:hover": {
-                backgroundColor: theme.palette.primary[500],
-              },
-            }}
-          >
-            Register
-          </Button>
-        </Stack>
+      <CardActions sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
+        {userInfo ? (
+          <UserInfo userInfo={userInfo} />
+        ) : (
+          <Stack direction="row" spacing={2}>
+            <Button
+              variant="outlined"
+              component={Link}
+              to="/login"
+              size="medium"
+            >
+              Login
+            </Button>
+            <Button
+              variant="contained"
+              component={Link}
+              to="/register"
+              size="medium"
+              sx={{
+                backgroundColor: theme.palette.primary[400],
+
+                "&:hover": {
+                  backgroundColor: theme.palette.primary[500],
+                },
+              }}
+            >
+              Register
+            </Button>
+          </Stack>
+        )}
       </CardActions>
     </Card>
   );

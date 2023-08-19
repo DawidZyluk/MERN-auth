@@ -12,8 +12,19 @@ const tokens = {
     800: "#003049",
     900: "#001824",
   },
+  grey: {
+    100: "#eff0f2",
+    200: "#dee1e5",
+    300: "#ced3d7",
+    400: "#bdc4ca",
+    500: "#adb5bd",
+    600: "#8a9197",
+    700: "#686d71",
+    800: "#45484c",
+    900: "#232426"
+},
   error: {
-    50: '#f7d7dd',
+    50: "#f7d7dd",
     100: "#f7cdd4",
     200: "#f09ba9",
     300: "#e8687f",
@@ -35,6 +46,10 @@ export const themeOptions = createTheme({
       ...tokens.primary,
       main: tokens.primary[500],
     },
+    grey: {
+      ...tokens.grey,
+      main: tokens.grey[500],
+    },
     secondary: {
       main: "#f50057",
     },
@@ -48,9 +63,9 @@ export const themeOptions = createTheme({
       textTransform: "none",
     },
     h3: {
-      '@media (max-width: 375px)': {
-        fontSize: "2.5rem"
-      }
-    }
+      "@media (max-width: 375px)": {
+        fontSize: "2.5rem",
+      },
+    },
   },
 });
