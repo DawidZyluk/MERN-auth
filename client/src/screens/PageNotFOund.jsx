@@ -1,7 +1,7 @@
 import { Container, Typography } from '@mui/material'
 import React from 'react'
 
-const PageNotFOund = () => {
+const PageNotFound = () => {
   return (
     <Container sx={{textAlign: 'center', mt: 10}}>
       <Typography variant='h3'>Page not found</Typography>
@@ -9,4 +9,4 @@ const PageNotFOund = () => {
   )
 }
 
-export default PageNotFOund
+export default PageNotFound

@@ -8,18 +8,18 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import HomePage from "./screens/HomePage.jsx";
-import RootLayout from "./screens/RootLayout";
+import RootLayout from "./screens/RootLayout.jsx";
 import { themeOptions } from "./theme";
 import { Provider } from "react-redux";
 import Login from "./screens/Login.jsx";
 import Register from "./screens/Register.jsx";
 import { store } from "./store/index.js";
 import { Toaster } from "react-hot-toast";
-import Profile from "./screens/Profile";
-import PrivateRoute from "./components/PrivateRoute";
-import PageNotFOund from "./screens/PageNotFOund";
-import RequestReset from "./screens/RequestReset";
-import PasswordReset from "./screens/PasswordReset";
+import Profile from "./screens/Profile.jsx";
+import PrivateRoute from "./components/PrivateRoute.jsx";
+import PageNotFound from "./screens/PageNotFound.jsx";
+import RequestReset from "./screens/RequestReset.jsx";
+import PasswordReset from "./screens/PasswordReset.jsx";
 
 const router = createBrowserRouter([
   {
@@ -32,7 +32,7 @@ const router = createBrowserRouter([
       },
       {
         path: "*",
-        element: <PageNotFOund />,
+        element: <PageNotFound />,
       },
       {
         path: "login",

@@ -13,7 +13,7 @@ import { Card } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { toast } from "react-hot-toast";
 
-const loginSchema = yup.object().shape({
+const requestSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Required"),
 });
 
@@ -81,7 +81,7 @@ export default function RequestReset() {
           validateOnBlur={false}
           onSubmit={handleSubmit}
           initialValues={initialValues}
-          validationSchema={loginSchema}
+          validationSchema={requestSchema}
         >
           {({
             values,
