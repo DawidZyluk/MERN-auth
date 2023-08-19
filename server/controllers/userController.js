@@ -76,7 +76,7 @@ export const requestPasswordReset = asyncHandler(async (req, res) => {
     token: hashedToken,
     createdAt: Date.now(),
   });
-  const link = `${process.env.CLIENT_URL}/passwordReset?token=${newToken}&id=${user._id}`;
+  const link = `${process.env.CLIENT_URL}passwordReset?token=${newToken}&id=${user._id}`;
 
   sendEmail(
     email,
@@ -85,6 +85,45 @@ export const requestPasswordReset = asyncHandler(async (req, res) => {
     "/server/templates/requestResetPassword.ejs"
   );
   res.status(200).json({ message: "Email sent" });
+});
+
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { userId, token, password } = req.body;
+
+  let passwordResetToken = await resetToken.findOne({ userId });
+  if (!passwordResetToken)
+    return res
+      .status(400)
+      .json({ message: "Invalid or expired password reset token" });
+
+  const isValid = await bcrypt.compare(token, passwordResetToken.token);
+  if (!isValid)
+    return res
+      .status(400)
+      .json({ message: "Invalid or expired password reset token" });
+
+  const salt = await bcrypt.genSalt(10);
+  const hashPassword = await bcrypt.hash(password, salt);
+
+  await User.updateOne(
+    { _id: userId },
+    { $set: { password: hashPassword } },
+    { new: true }
+  );
+
+  const updatedUser = await User.findById({ _id: userId });
+  sendEmail(
+    updatedUser.email,
+    "Password Reset Successfully",
+    {
+      name: updatedUser.name,
+      url: process.env.CLIENT_URL
+    },
+    "/server/templates/resetPassword.ejs"
+  );
+
+  await passwordResetToken.deleteOne();
+  res.status(200).json({ message: "Password changed!" });
 });
 
 export const logoutUser = asyncHandler(async (req, res) => {

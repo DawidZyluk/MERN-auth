@@ -8,8 +8,10 @@ import Typography from "@mui/material/Typography";
 import { Container, Stack, useMediaQuery } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function Hero() {
+  const { userInfo } = useSelector((state) => state.auth);
   const theme = useTheme();
   return (
     <Card

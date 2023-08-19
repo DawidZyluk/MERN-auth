@@ -1,31 +1,38 @@
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { useRequestResetMutation } from "../store/usersApiSlice";
+import { useResetPasswordMutation } from "../store/usersApiSlice";
 import { useEffect, useState } from "react";
 import { Card } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { toast } from "react-hot-toast";
 
-const loginSchema = yup.object().shape({
-  email: yup.string().email("Invalid email").required("Required"),
+const resetSchema = yup.object().shape({
+  password: yup.string().required("Required"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match")
+    .required("Required"),
 });
 
 const initialValues = {
-  email: "",
+  password: "",
+  confirmPassword: "",
 };
 
 export default function RequestReset() {
   const theme = useTheme();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  const [requestReset, { error }] = useRequestResetMutation();
+
+  const [resetPassword, { error }] = useResetPasswordMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -36,9 +43,13 @@ export default function RequestReset() {
 
   const handleSubmit = async (values, onSubmitProps) => {
     try {
-      const {email} = values
-      await requestReset({email}).unwrap();
-      toast.success("Password reset e-mail have been sent");
+      const {password, confirmPassword} = values
+      const token = searchParams.get("token");
+      const userId = searchParams.get("id");
+      console.log(password, confirmPassword, token, userId)
+      await resetPassword({password, confirmPassword, token, userId}).unwrap();
+      navigate("/login")
+      toast.success("Password have been changed!");
     } catch (err) {
       console.log(err?.data?.message || err.error);
     }
@@ -59,7 +70,7 @@ export default function RequestReset() {
         }}
       >
         <Typography sx={{ mb: 2 }} component="h1" variant="h5">
-          Request password reset
+          Reset your password
         </Typography>
         {error && (
           <Card
@@ -81,7 +92,7 @@ export default function RequestReset() {
           validateOnBlur={false}
           onSubmit={handleSubmit}
           initialValues={initialValues}
-          validationSchema={loginSchema}
+          validationSchema={resetSchema}
         >
           {({
             values,
@@ -102,16 +113,33 @@ export default function RequestReset() {
               <TextField
                 margin="normal"
                 fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.email}
-                error={Boolean(touched.email) && Boolean(errors.email)}
-                helperText={touched.email && errors.email}
+                value={values.password}
+                error={Boolean(touched.password) && Boolean(errors.password)}
+                helperText={touched.password && errors.password}
+              />
+              <TextField
+                margin="normal"
+                fullWidth
+                name="confirmPassword"
+                label="Confirm password"
+                type="password"
+                id="confirmPassword"
+                autoComplete="current-password"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.confirmPassword}
+                error={
+                  Boolean(touched.confirmPassword) &&
+                  Boolean(errors.confirmPassword)
+                }
+                helperText={touched.confirmPassword && errors.confirmPassword}
               />
               <Button
                 type="submit"
@@ -120,7 +148,7 @@ export default function RequestReset() {
                 sx={{ mt: 3, mb: 2 }}
                 disabled={isSubmitting || !isValid}
               >
-                Send instructions
+                Change password
               </Button>
             </Box>
           )}

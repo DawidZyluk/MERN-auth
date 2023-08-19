@@ -26,12 +26,12 @@ export const sendEmail = async (receiver, subject, payload, template) => {
       html: renderedTemplate,
     };
 
-    // transport.sendMail(mailOptions, (error, info) => {
-    //   if (error) {
-    //     return console.log(error);
-    //   }
-    //   console.log("Message sent: %s", info.messageId);
-    // });
+    transport.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return console.log(error);
+      }
+      console.log("Message sent: %s", info.messageId);
+    });
   } catch (error) {
     console.log(error);
   }
