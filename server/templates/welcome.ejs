@@ -1,0 +1,42 @@
+<%- include('./includes/header.ejs') %>
+
+<div class="container">
+  <div class="title">
+    <h1>Welcome to Our Community!</h1>
+  </div>
+  <div class="message">
+    <p>Hello <%= payload.name %>,</p>
+
+    <p>
+      Welcome to MERN-auth – your gateway to a seamless MERN authentication
+      experience!
+    </p>
+
+    <p>With us, you'll enjoy:</p>
+
+    <ul>
+      <li>
+        Secure authentication powered by MongoDB, Express.js, React, and
+        Node.js.
+      </li>
+      <li>
+        Personalized profiles that you can customize to reflect your
+        preferences.
+      </li>
+      <li>
+        Access to a supportive community for discussions and knowledge sharing.
+      </li>
+      <li>
+        Feel free to explore and make the most of your journey with MERN-auth.
+        We're here to assist you every step of the way.
+      </li>
+    </ul>
+
+    <p>Best regards,</p>
+    <p>The MERN-auth Team</p>
+    <a class="cta-button" href="<%= payload.url %>login">Get Started</a>
+  </div>
+  
+</div>
+
+<%- include('./includes/footer.ejs') %>

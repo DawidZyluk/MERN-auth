@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { useResetMutation } from "../store/usersApiSlice";
+import { useRequestResetMutation } from "../store/usersApiSlice";
 import { useEffect, useState } from "react";
 import { Card } from "@mui/material";
 import { useTheme } from "@emotion/react";
@@ -21,22 +21,23 @@ const initialValues = {
   email: "",
 };
 
-export default function Reset() {
+export default function RequestReset() {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const [reset, { error }] = useResetMutation();
+  const [requestReset, { error }] = useRequestResetMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (userInfo) {
-      navigate("/");
+      navigate("/profile");
     }
   }, [navigate, userInfo]);
 
   const handleSubmit = async (values, onSubmitProps) => {
     try {
-      await reset(values.email).unwrap();
+      const {email} = values
+      await requestReset({email}).unwrap();
       toast.success("Password reset e-mail have been sent");
     } catch (err) {
       console.log(err?.data?.message || err.error);
@@ -49,7 +50,7 @@ export default function Reset() {
         sx={{
           boxShadow: 3,
           borderRadius: 2,
-          px: 4,
+          px: 12,
           py: 6,
           marginTop: 8,
           display: "flex",
@@ -72,7 +73,7 @@ export default function Reset() {
             }}
           >
             <Typography sx={{ color: theme.palette.error.main }}>
-              {error.data.message}
+              {error?.data?.message || "Something went wrong. Try again"}
             </Typography>
           </Card>
         )}
@@ -96,7 +97,7 @@ export default function Reset() {
               component="form"
               onSubmit={handleSubmit}
               noValidate
-              sx={{ mt: 1 }}
+              sx={{ mt: 1,}}
             >
               <TextField
                 margin="normal"

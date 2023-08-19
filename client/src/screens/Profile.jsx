@@ -1,7 +1,5 @@
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { Link, useNavigate } from "react-router-dom";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -27,7 +25,6 @@ const registerSchema = yup.object().shape({
 
 export default function Profile() {
   const theme = useTheme();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [update, { error }] = useUpdateMutation();
@@ -79,7 +76,7 @@ export default function Profile() {
             }}
           >
             <Typography sx={{ color: theme.palette.error.main }}>
-              {error.data.message}
+              {error?.data?.message || "Something went wrong. Try again"}
             </Typography>
           </Card>
         )}

@@ -40,14 +40,14 @@ export default function Register() {
 
   useEffect(() => {
     if (userInfo) {
-      navigate("/");
+      navigate("/profile");
     }
   }, [navigate, userInfo]);
 
   const handleSubmit = async (values, onSubmitProps) => {
-    const { name, email, password } = values;
+    const { name, email, password, confirmPassword } = values;
     try {
-      await register({ name, email, password }).unwrap();
+      await register({ name, email, password, confirmPassword }).unwrap();
       onSubmitProps.resetForm();
       navigate("/login");
       toast.success("Successfully registered!");
@@ -85,7 +85,7 @@ export default function Register() {
             }}
           >
             <Typography sx={{ color: theme.palette.error.main }}>
-              {error.data.message}
+              {error?.data?.message || "Something went wrong. Try again"}
             </Typography>
           </Card>
         )}

@@ -25,7 +25,7 @@ const loginSchema = yup.object().shape({
 const initialValues = {
   email: "",
   password: "",
-  rememberMe: false,
+  rememberMe: true,
 };
 
 export default function Login() {
@@ -38,7 +38,7 @@ export default function Login() {
 
   useEffect(() => {
     if (userInfo) {
-      navigate("/");
+      navigate("/profile");
     }
   }, [navigate, userInfo]);
 
@@ -48,7 +48,7 @@ export default function Login() {
       const res = await login({ email, password }).unwrap();
       dispatch(setLogin({ ...res, rememberMe }));
       onSubmitProps.resetForm();
-      navigate("/");
+      navigate("/profile");
       toast.success("User logged in!");
     } catch (err) {
       console.log(err?.data?.message || err.error);
@@ -84,7 +84,7 @@ export default function Login() {
             }}
           >
             <Typography sx={{ color: theme.palette.error.main }}>
-              {error.data.message}
+              {error?.data?.message || "Something went wrong. Try again"}
             </Typography>
           </Card>
         )}
@@ -145,7 +145,7 @@ export default function Login() {
                     value={values.rememberMe}
                     onChange={handleChange}
                     color="primary"
-                    checked
+                    defaultChecked
                   />
                 }
                 label="Remember me"
@@ -161,7 +161,7 @@ export default function Login() {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link to="/reset">
+                  <Link to="/requestReset">
                     Forgot password?
                   </Link>
                 </Grid>

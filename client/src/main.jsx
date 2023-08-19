@@ -18,7 +18,7 @@ import { Toaster } from "react-hot-toast";
 import Profile from "./screens/Profile";
 import PrivateRoute from "./components/PrivateRoute";
 import PageNotFOund from "./screens/PageNotFOund";
-import Reset from "./screens/Reset";
+import RequestReset from "./screens/requestReset";
 
 const router = createBrowserRouter([
   {
@@ -38,8 +38,8 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "reset",
-        element: <Reset />,
+        path: "requestReset",
+        element: <RequestReset />,
       },
       {
         path: "register",

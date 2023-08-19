@@ -1,7 +1,11 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { generateToken } from "../utils/generateToken.js";
+import { json } from "express";
+import resetToken from "../models/resetToken.js";
+import { sendEmail } from "../utils/sendEmail.js";
 
 export const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -16,8 +20,7 @@ export const authUser = asyncHandler(async (req, res) => {
       email: user.email,
     });
   } else {
-    res.status(401);
-    throw new Error("Invalid email or password");
+    res.status(401).json({ message: "Invalid email or password" });
   }
 });
 
@@ -27,8 +30,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ email });
 
   if (userExists) {
-    res.status(400);
-    throw new Error("User already exists");
+    return res.status(400).json({ message: "User already exists" });
   }
 
   const user = await User.create({
@@ -43,10 +45,46 @@ export const registerUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
     });
+    sendEmail(
+      email,
+      "Welcome to MERN-auth",
+      { name: user.name, url: process.env.CLIENT_URL },
+      "/server/templates/welcome.ejs"
+    );
   } else {
-    res.status(400);
-    throw new Error("Invalid user data");
+    res.status(400).json({ message: "Invalid user data" });
   }
+});
+
+export const requestPasswordReset = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user)
+    return res.status(400).json({ message: "No account with this email" });
+
+  const token = await resetToken.findOne({ userId: user._id });
+  if (token) await token.deleteOne();
+
+  const newToken = crypto.randomBytes(32).toString("hex");
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedToken = await bcrypt.hash(newToken, salt);
+
+  await resetToken.create({
+    userId: user._id,
+    token: hashedToken,
+    createdAt: Date.now(),
+  });
+  const link = `${process.env.CLIENT_URL}/passwordReset?token=${newToken}&id=${user._id}`;
+
+  sendEmail(
+    email,
+    "Password reset request",
+    { name: user.name, url: link },
+    "/server/templates/requestResetPassword.ejs"
+  );
+  res.status(200).json({ message: "Email sent" });
 });
 
 export const logoutUser = asyncHandler(async (req, res) => {
@@ -87,7 +125,6 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
       email: updateUser.email,
     });
   } else {
-    res.status(404);
-    throw new Error("User not found");
+    res.status(404).json({ message: "User not found" });
   }
 });

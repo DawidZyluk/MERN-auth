@@ -31,7 +31,7 @@ const LoggedInLinks = ({ name }) => {
     try {
       await logoutApi().unwrap();
       dispatch(setLogout());
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       console.log(error);
     }
