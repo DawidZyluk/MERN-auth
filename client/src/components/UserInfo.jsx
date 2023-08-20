@@ -1,6 +1,5 @@
-import { Avatar, Box, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React from "react";
-import { stringAvatar, stringToColor } from "../utils/stringAvatar";
 import { useTheme } from "@emotion/react";
 
 const UserInfo = ({ userInfo }) => {
