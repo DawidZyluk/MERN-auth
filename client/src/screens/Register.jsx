@@ -7,12 +7,13 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useTheme } from "@emotion/react";
 import { useRegisterMutation } from "../store/usersApiSlice";
 import { toast } from "react-hot-toast";
 import { Card } from "@mui/material";
+import { setLogin } from "../store/authSlice";
 
 const registerSchema = yup.object().shape({
   name: yup.string().required("Required"),
@@ -34,6 +35,7 @@ const initialValues = {
 export default function Register() {
   const theme = useTheme();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [register, { error }] = useRegisterMutation();
   const { userInfo } = useSelector((state) => state.auth);
@@ -47,9 +49,10 @@ export default function Register() {
   const handleSubmit = async (values, onSubmitProps) => {
     const { name, email, password, confirmPassword } = values;
     try {
-      await register({ name, email, password, confirmPassword }).unwrap();
+      const res = await register({ name, email, password, confirmPassword }).unwrap();
+      dispatch(setLogin({ ...res, rememberMe: true }));
+      navigate("/");
       onSubmitProps.resetForm();
-      navigate("/login");
       toast.success("Successfully registered!");
     } catch (err) {
       console.log(err?.data?.message || err.error);

@@ -2,20 +2,22 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import { generateToken } from "../utils/generateToken.js";
+import { generateJwtToken } from "../utils/generateJwtToken.js";
 import { json } from "express";
-import resetToken from "../models/resetToken.js";
+import Token from "../models/tokenModel.js";
 import { sendEmail } from "../utils/sendEmail.js";
+import { createToken } from "../utils/createToken.js";
 
-export const authUser = asyncHandler(async (req, res) => {
+export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
 
   if (user && (await bcrypt.compare(password, user.password))) {
-    generateToken(res, user._id);
+    generateJwtToken(res, user._id);
     res.status(201).json({
       _id: user._id,
+      verified: user.verified,
       name: user.name,
       email: user.email,
     });
@@ -24,7 +26,7 @@ export const authUser = asyncHandler(async (req, res) => {
   }
 });
 
-export const registerUser = asyncHandler(async (req, res) => {
+export const register = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
   const userExists = await User.findOne({ email });
@@ -40,15 +42,20 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
+    generateJwtToken(res, user._id);
+    const newToken = await createToken(user._id, "verification");
+    const link = `${process.env.CLIENT_URL}verifyAccount?token=${newToken}&id=${user._id}`;
+
     res.status(201).json({
       _id: user._id,
+      verified: user.verified,
       name: user.name,
       email: user.email,
     });
-    sendEmail(
+    await sendEmail(
       email,
       "Welcome to MERN-auth",
-      { name: user.name, url: process.env.CLIENT_URL },
+      { name: user.name, url: link },
       "/server/templates/welcome.ejs"
     );
   } else {
@@ -63,22 +70,11 @@ export const requestPasswordReset = asyncHandler(async (req, res) => {
   if (!user)
     return res.status(400).json({ message: "No account with this email" });
 
-  const token = await resetToken.findOne({ userId: user._id });
-  if (token) await token.deleteOne();
+  const newToken = await createToken(user._id, "password reset");
 
-  const newToken = crypto.randomBytes(32).toString("hex");
-
-  const salt = await bcrypt.genSalt(10);
-  const hashedToken = await bcrypt.hash(newToken, salt);
-
-  await resetToken.create({
-    userId: user._id,
-    token: hashedToken,
-    createdAt: Date.now(),
-  });
   const link = `${process.env.CLIENT_URL}passwordReset?token=${newToken}&id=${user._id}`;
 
-  sendEmail(
+  await sendEmail(
     email,
     "Password reset request",
     { name: user.name, url: link },
@@ -90,17 +86,13 @@ export const requestPasswordReset = asyncHandler(async (req, res) => {
 export const resetPassword = asyncHandler(async (req, res) => {
   const { userId, token, password } = req.body;
 
-  let passwordResetToken = await resetToken.findOne({ userId });
-  if (!passwordResetToken)
-    return res
-      .status(400)
-      .json({ message: "Invalid or expired password reset token" });
+  let resetToken = await Token.findOne({ userId, type: "password reset" });
 
-  const isValid = await bcrypt.compare(token, passwordResetToken.token);
-  if (!isValid)
+  if (!resetToken || !(await bcrypt.compare(token, resetToken.token))) {
     return res
       .status(400)
       .json({ message: "Invalid or expired password reset token" });
+  }
 
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(password, salt);
@@ -112,18 +104,17 @@ export const resetPassword = asyncHandler(async (req, res) => {
   );
 
   const updatedUser = await User.findById({ _id: userId });
-  sendEmail(
+  await passwordResetToken.deleteOne();
+  res.status(200).json({ message: "Password changed!" });
+  await sendEmail(
     updatedUser.email,
     "Password Reset Successfully",
     {
       name: updatedUser.name,
-      url: process.env.CLIENT_URL
+      url: process.env.CLIENT_URL,
     },
     "/server/templates/resetPassword.ejs"
   );
-
-  await passwordResetToken.deleteOne();
-  res.status(200).json({ message: "Password changed!" });
 });
 
 export const logoutUser = asyncHandler(async (req, res) => {
@@ -137,11 +128,12 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 export const getUserProfile = asyncHandler(async (req, res) => {
   const user = {
-    _id: req.user._id,
-    name: req.user.name,
-    email: req.user.email,
+    _id: user._id,
+    verified: user.verified,
+    name: user.name,
+    email: user.email,
   };
-
+  console.log("first")
   res.status(200).json(user);
 });
 
@@ -159,11 +151,61 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     const updateUser = await user.save();
 
     res.status(200).json({
-      _id: updateUser._id,
-      name: updateUser.name,
-      email: updateUser.email,
+      _id: user._id,
+      verified: user.verified,
+      name: user.name,
+      email: user.email,
     });
   } else {
     res.status(404).json({ message: "User not found" });
   }
+});
+
+export const requestVerifyAccount = asyncHandler(async (req, res) => {
+  const { _id, name, email } = req.user;
+
+  const user = await User.findById(req.user._id).select("name email verified");;
+  if (user.verified)
+    return res.status(208).json({ message: "User already verified" });
+
+  const newToken = await createToken(_id, "verification");
+  const link = `${process.env.CLIENT_URL}verifyAccount?token=${newToken}&id=${_id}`;
+  await sendEmail(
+    email,
+    "Verification request",
+    { name: name, url: link },
+    "/server/templates/verificationRequest.ejs"
+  );
+  res.status(200).json({ message: "Verification email has been sent" });
+});
+
+export const verifyAccount = asyncHandler(async (req, res) => {
+  const { userId, token } = req.body;
+
+  const user = await User.findOne({ _id: userId }).select("name email verified");
+  if (user.verified)
+    return res
+      .status(200)
+      .json({ message: "This email has already been verified", user });
+
+  let verificationToken = await Token.findOne({ userId, type: "verification" });
+
+  if (
+    !verificationToken ||
+    !(await bcrypt.compare(token, verificationToken.token))
+  ) {
+    return res
+      .status(400)
+      .json({ message: "Invalid or expired verification token" });
+  }
+
+  await User.updateOne(
+    { _id: userId },
+    { $set: { verified: true } },
+    { new: true }
+  );
+  await verificationToken.deleteOne();
+  const updatedUser = await User.findOne({ _id: userId }).select("name email verified");
+
+  res.status(200).send({ message: "Email verified successfully", user: updatedUser });
 });

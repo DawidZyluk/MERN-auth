@@ -45,6 +45,20 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    verifyAccount: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/verifyAccount`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    requestVerifyAccount: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/requestVerifyAccount`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -54,5 +68,7 @@ export const {
   useLogoutMutation,
   useUpdateMutation,
   useRequestResetMutation,
-  useResetPasswordMutation
+  useResetPasswordMutation,
+  useVerifyAccountMutation,
+  useRequestVerifyAccountMutation
 } = usersApiSlice;

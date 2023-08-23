@@ -1,6 +1,5 @@
 import nodemailer from "nodemailer";
 import path from "path";
-import { asyncHandler } from "./asyncHandler.js";
 import { renderFile } from "ejs";
 
 export const sendEmail = async (receiver, subject, payload, template) => {
@@ -12,7 +11,6 @@ export const sendEmail = async (receiver, subject, payload, template) => {
         pass: process.env.EMAIL_PASSWORD,
       },
     });
-
     const __dirname = path.resolve();
     const renderedTemplate = await renderFile(__dirname + template, {
       receiver,
@@ -34,5 +32,6 @@ export const sendEmail = async (receiver, subject, payload, template) => {
     });
   } catch (error) {
     console.log(error);
+    throw new Error("Could not send Email")
   }
 };

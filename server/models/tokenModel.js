@@ -1,10 +1,15 @@
 import mongoose from "mongoose";
 
-const resetTokenSchema = mongoose.Schema({
+const tokenSchema = mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "user",
+  },
+  type: {
+    type: String,
+    required: true,
+    enum: ["password reset", "verification"],
   },
   token: {
     type: String,
@@ -14,10 +19,10 @@ const resetTokenSchema = mongoose.Schema({
     type: Date,
     required: true,
     default: Date.now,
-    expires: 900,
+    expires: 10,
   },
 });
 
-const resetToken = mongoose.model("resetToken", resetTokenSchema);
+const Token = mongoose.model("Token", tokenSchema);
 
-export default resetToken;
+export default Token;

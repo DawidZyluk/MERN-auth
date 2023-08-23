@@ -1,0 +1,20 @@
+<%- include('./includes/header.ejs') %>
+
+<div class="container">
+  <div class="title">
+    <h1>Verify your e-mail</h1>
+  </div>
+  <div class="message">
+    <p>Hello <%= payload.name %>,</p>
+
+    <p>You requested e-mail verification.</p>
+
+    <p>Please, click the link below to verify your e-mail</p>
+
+    <p>Best regards,</p>
+    <p>The MERN-auth Team</p>
+    <a class="cta-button" href="<%= payload.url %>">Verify e-mail</a>
+  </div>
+</div>
+
+<%- include('./includes/footer.ejs') %>

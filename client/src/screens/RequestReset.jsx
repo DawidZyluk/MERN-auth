@@ -40,7 +40,7 @@ export default function RequestReset() {
       await requestReset({email}).unwrap();
       toast.success("Password reset e-mail have been sent");
     } catch (err) {
-      console.log(err?.data?.message || err.error);
+      console.log(err?.data?.message || err);
     }
   };
 

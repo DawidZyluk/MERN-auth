@@ -46,7 +46,6 @@ export default function RequestReset() {
       const {password, confirmPassword} = values
       const token = searchParams.get("token");
       const userId = searchParams.get("id");
-      console.log(password, confirmPassword, token, userId)
       await resetPassword({password, confirmPassword, token, userId}).unwrap();
       navigate("/login")
       toast.success("Password have been changed!");
@@ -77,7 +76,6 @@ export default function RequestReset() {
             variant="outlined"
             sx={{
               width: "100%",
-              maxWidth: "360px",
               textAlign: "center",
               py: 1,
               borderColor: theme.palette.error.light,

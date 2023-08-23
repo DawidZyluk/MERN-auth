@@ -20,6 +20,7 @@ import PrivateRoute from "./components/PrivateRoute.jsx";
 import PageNotFound from "./screens/PageNotFound.jsx";
 import RequestReset from "./screens/RequestReset.jsx";
 import PasswordReset from "./screens/PasswordReset.jsx";
+import VerifyAccount from "./screens/VerifyAccount";
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
         element: <Register />,
       },
       {
+        path: "verifyAccount",
+        element: <VerifyAccount />
+      },
+      {
         path: "",
         element: <PrivateRoute />,
         children: [
@@ -58,6 +63,7 @@ const router = createBrowserRouter([
             path: "profile",
             element: <Profile />,
           },
+          
         ],
       },
     ],

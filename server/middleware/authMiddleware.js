@@ -14,9 +14,9 @@ export const protect = asyncHandler(async (req, res, next) => {
       req.user = await User.findById(decoded.userId).select("-password");
       next();
     } catch (error) {
-      res.status(401).json({ message: "Not authorized, invalid token" });
+      res.status(401).json({ message: "Your token has expired. Log in again." });
     }
   } else {
-    res.status(401).json({ message: "Not authorized, invalid token" });
+    res.status(401).json({ message: "Your token has expired. Log in again." });
   }
 });
