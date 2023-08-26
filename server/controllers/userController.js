@@ -127,13 +127,14 @@ export const logoutUser = asyncHandler(async (req, res) => {
 });
 
 export const getUserProfile = asyncHandler(async (req, res) => {
+  
   const user = {
-    _id: user._id,
-    verified: user.verified,
-    name: user.name,
-    email: user.email,
+    _id: req.user._id,
+    verified: req.user.verified,
+    name: req.user.name,
+    email: req.user.email,
   };
-  console.log("first")
+  
   res.status(200).json(user);
 });
 
@@ -148,13 +149,12 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
       user.password = req.body.password;
     }
 
-    const updateUser = await user.save();
-
+    const updatedUser = await user.save();
     res.status(200).json({
-      _id: user._id,
-      verified: user.verified,
-      name: user.name,
-      email: user.email,
+      _id: updatedUser._id,
+      verified: updatedUser.verified,
+      name: updatedUser.name,
+      email: updatedUser.email,
     });
   } else {
     res.status(404).json({ message: "User not found" });
@@ -166,7 +166,7 @@ export const requestVerifyAccount = asyncHandler(async (req, res) => {
 
   const user = await User.findById(req.user._id).select("name email verified");;
   if (user.verified)
-    return res.status(208).json({ message: "User already verified" });
+    return res.status(208).json({ message: "User already verified", user });
 
   const newToken = await createToken(_id, "verification");
   const link = `${process.env.CLIENT_URL}verifyAccount?token=${newToken}&id=${_id}`;

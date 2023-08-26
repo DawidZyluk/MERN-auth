@@ -10,10 +10,12 @@ import { useTheme } from "@emotion/react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import UserInfo from "./UserInfo";
+import { useGetProfileQuery } from "../store/usersApiSlice";
 
 export default function Hero() {
   const { userInfo } = useSelector((state) => state.auth);
   const theme = useTheme();
+
   return (
     <Card
       variant="outlined"
@@ -44,7 +46,7 @@ export default function Hero() {
         </Typography>
       </CardContent>
 
-      <CardActions sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
+      <CardActions sx={{ display: "flex", justifyContent: "center", flexDirection: "column", mt: 1 }}>
         {userInfo ? (
           <UserInfo userInfo={userInfo} />
         ) : (

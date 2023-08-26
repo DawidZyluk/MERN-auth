@@ -40,7 +40,7 @@ export default function Profile() {
   const handleSubmit = async (values, onSubmitProps) => {
     try {
       const res = await update(values).unwrap();
-      dispatch(setLogin({ ...res }));
+      dispatch(setLogin({...userInfo, ...res }));
       toast.success("Profile Updated!");
     } catch (err) {
       console.log(err?.data?.message || err.error);

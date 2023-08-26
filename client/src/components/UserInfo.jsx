@@ -3,15 +3,19 @@ import React from "react";
 import { useTheme } from "@emotion/react";
 import { useRequestVerifyAccountMutation } from "../store/usersApiSlice";
 import { toast } from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { setLogin } from "../store/authSlice";
 
 const UserInfo = ({ userInfo }) => {
   const { name, email, verified } = userInfo;
   const [requestVerification] = useRequestVerifyAccountMutation();
   const theme = useTheme();
+  const dispatch = useDispatch();
+
   const resendVerificationEmail = async () => {
     try {
       const res = await requestVerification().unwrap();
-      console.log(res);
+      dispatch(setLogin({...UserInfo, ...res.user}))
       toast.success(res.message)
     } catch (error) {
       toast.error(error.data.message)
