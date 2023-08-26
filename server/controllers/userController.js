@@ -104,7 +104,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
   );
 
   const updatedUser = await User.findById({ _id: userId });
-  await passwordResetToken.deleteOne();
+  await resetToken.deleteOne();
   res.status(200).json({ message: "Password changed!" });
   await sendEmail(
     updatedUser.email,
