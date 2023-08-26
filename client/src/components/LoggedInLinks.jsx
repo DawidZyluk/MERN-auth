@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useLogoutMutation } from "../store/usersApiSlice";
-import { setLogout } from "../store/authSlice";
+import { useGetProfileQuery, useLogoutMutation } from "../store/usersApiSlice";
+import { setLogin, setLogout } from "../store/authSlice";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
@@ -13,14 +13,21 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Logout from "@mui/icons-material/Logout";
 import { stringAvatar, stringToColor } from "../utils/stringAvatar";
+import toast from "react-hot-toast";
 
-const LoggedInLinks = ({ name }) => {
+const LoggedInLinks = ({ userInfo }) => {
   const [anchorEl, setAnchorEl] = useState();
   const open = Boolean(anchorEl);
   const [logoutApi] = useLogoutMutation();
+  const { data, refetch } = useGetProfileQuery();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    refetch();
+    dispatch(setLogin({ ...userInfo, ...data }));
+  }, [data]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -37,6 +44,7 @@ const LoggedInLinks = ({ name }) => {
       navigate("/login");
     } catch (error) {
       console.log(error);
+      toast.error("Could not log out");
     }
   };
 
@@ -53,8 +61,8 @@ const LoggedInLinks = ({ name }) => {
             aria-expanded={open ? "true" : undefined}
           >
             <Avatar
-              sx={{ bgcolor: stringToColor(name) }}
-              children={`${name[0]}`}
+              sx={{ bgcolor: stringToColor(userInfo.name) }}
+              children={`${userInfo.name[0]}`}
             />
           </IconButton>
         </Tooltip>

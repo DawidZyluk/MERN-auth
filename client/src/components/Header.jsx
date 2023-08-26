@@ -25,7 +25,7 @@ export default function Header() {
             MERN-auth
           </Typography>
           {userInfo ? (
-            <LoggedInLinks name={userInfo.name}/>
+            <LoggedInLinks userInfo={userInfo}/>
           ) : (
             <>
               <Button color="inherit" component={NavLink} to="/login">
