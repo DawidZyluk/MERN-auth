@@ -12,6 +12,8 @@ Live example: https://mern-auth-d99z.onrender.com
 - State management with Redux Toolkit
 - Data fetching with Redux Toolkit Query
 - MaterialUI integration for polished and responsive designs
+- Password reset and e-mail verification
+- API limiters to limit repeated requests
 
 ## Project Structure
 
@@ -24,6 +26,7 @@ The project is structured as follows:
 │   │   ├── components/   # Reusable React components
 │   │   ├── screens/      # Different application pages
 │   │   ├── store/        # API service and state functions
+│   │   ├── utils/        # Helper functions
 │   │   ├── ...
 ├── ...
 ├── server/               # backend server using Express
