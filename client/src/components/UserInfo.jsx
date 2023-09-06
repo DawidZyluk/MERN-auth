@@ -15,7 +15,7 @@ const UserInfo = ({ userInfo }) => {
   const resendVerificationEmail = async () => {
     try {
       const res = await requestVerification().unwrap();
-      if(res.user) dispatch(setLogin({ ...UserInfo, ...res.user }));
+      if(res.user) dispatch(setLogin({ ...userInfo, ...res.user }));
       toast.success(res.message);
     } catch (error) {
       toast.error(error.data.message);

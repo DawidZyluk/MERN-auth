@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useGetProfileQuery, useLogoutMutation } from "../store/usersApiSlice";
-import { setLogin, setLogout } from "../store/authSlice";
+import { useLogoutMutation } from "../store/usersApiSlice";
+import { setLogout } from "../store/authSlice";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
@@ -19,15 +19,9 @@ const LoggedInLinks = ({ userInfo }) => {
   const [anchorEl, setAnchorEl] = useState();
   const open = Boolean(anchorEl);
   const [logoutApi] = useLogoutMutation();
-  const { data, refetch } = useGetProfileQuery();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    refetch();
-    dispatch(setLogin({ ...userInfo, ...data }));
-  }, [data]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
