@@ -8,9 +8,10 @@ import { registerSchema } from '../validators/registerValidator.js';
 import { updateSchema } from '../validators/updateSchema.js';
 import { resetRequestSchema } from '../validators/resetValidator.js';
 import { passwordResetSchema } from '../validators/passwordResetValidator.js';
+import { createAccountLimiter, loginLimiter } from '../middleware/limiters.js';
 
-router.post('/register', validator(registerSchema), register)
-router.post('/login', validator(loginSchema), login)
+router.post('/register', validator(registerSchema), createAccountLimiter, register)
+router.post('/login', validator(loginSchema), loginLimiter, login)
 router.post('/requestReset', validator(resetRequestSchema), requestPasswordReset)
 router.post('/resetPassword', validator(passwordResetSchema), resetPassword)
 router.post('/logout', logoutUser)

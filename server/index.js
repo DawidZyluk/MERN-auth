@@ -5,6 +5,7 @@ import userRoutes from "./routes/userRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import { connectDB } from "./config/db.js";
 import cookieParser from "cookie-parser";
+import { apiLimiter } from "./middleware/limiters.js";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use(cookieParser());
+app.use(apiLimiter)
 
 connectDB();
 

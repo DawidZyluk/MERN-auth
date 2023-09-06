@@ -27,7 +27,7 @@ const LoggedInLinks = ({ userInfo }) => {
   useEffect(() => {
     refetch();
     dispatch(setLogin({ ...userInfo, ...data }));
-  }, [data, ]);
+  }, [data]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
